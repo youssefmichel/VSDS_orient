@@ -1,0 +1,5 @@
+VSDS_name: Spoon
+N_viapoints: 35.0
+q_goal: [1,0.0,0.0,0]
+q_init: [ 0.7829,   -0.4357   , 0.0162   ,-0.4438]
+

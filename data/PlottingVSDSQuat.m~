@@ -1,0 +1,41 @@
+%% 
+clear all
+addpath('/home/hwadong/catkin_ws/src/vsds_orient/data/quat_utils') ;
+
+
+x=load('x_rob1.txt') ; 
+
+for i=1:length(x)
+x_ts(:,i)=quat_log(array2quat(x(i,4:end)'),array2quat(x(end,4:end)')) ;
+end
+
+vsds_name = 'Worm' ; 
+
+direc=strcat('/home/hwadong/catkin_ws/src/vsds_orient/config/', vsds_name,'/x_rec.txt') ;
+
+
+x_des=load(direc) ;
+
+
+
+
+dt=1/500 ;
+
+T=linspace(0,length(x)*dt,length(x)) ;
+T_des=linspace(0,length(x_des)*dt,length(x_des)) ;
+
+
+
+% plot(T,x(:,4:end)) ;
+% hold on
+% plot(T_des,x_des(:,4:end),'--') ;
+% hold on
+
+figure
+plot3(x_ts(1,:),x_ts(2,:),x_ts(3,:)
+
+
+
+% Q=load('Q_des_test.mat') ;
+% figure
+% plot(Q.Q_all.T,Q.Q_all.Q_arr) ;

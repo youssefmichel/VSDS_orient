@@ -1,0 +1,14 @@
+<launch>
+   <param name="VSDS_name" value="$(arg VSDS_name)"/>
+   <rosparam command="load" file="$(find vsds_orient)/config/$(arg VSDS_name)/Param.yaml"/>
+   <rosparam command="load" file="$(find vsds_orient)/config/control_param.yaml"/>
+
+<group if="$(eval VSDS_name == 'cutting')">
+  <node name="cutting_node" pkg="vsds_orient" type="cutting_node" output="screen" />
+</group>
+
+<group unless="$(eval VSDS_name == 'cutting')">
+  <node name="lasa_node" pkg="vsds_orient" type="lasa_node" output="screen" />
+</group>
+
+</launch>
