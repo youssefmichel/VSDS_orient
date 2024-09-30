@@ -2,7 +2,7 @@
 
 Copyright (C) 2023, by Youssef Michel.
 
-The project provides the C++ implementation of the VSDS approach for the orientation case (in Unit quaternions) which aims to generate a torque field
+The project provides the C++ implementation of the Variable Stiffness Dynamical System (VSDS) approach for the orientation case (in Unit quaternions) which aims to generate a torque field
 based on a first order DS and a desired stiffness profile in a closed loop configuration. For more details, please check:
 
 > [1] Y. Michel, M. Saveriano, F. J. Abu-Dakka and D. Lee, "Orientation Control with Variable Stiffness Dynamical Systems," 2023 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2023.
