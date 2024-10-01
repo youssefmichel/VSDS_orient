@@ -2,11 +2,12 @@
 
 Copyright (C) 2023, by Youssef Michel.
 
+### Description
 The project provides the C++ implementation of the Variable Stiffness Dynamical System (VSDS) approach for the orientation case (in Unit quaternions) which aims to generate a torque field
 based on a first order DS and a desired stiffness profile in a closed loop configuration. The streamlines of the VSDS controller are illustrated below
 
 <p float="center">
-  <img src="pics/quat.png" width="400" />
+     <img src="pics/quat.png" width="500" />
 </p>
 
 For more details, please check:
@@ -26,9 +27,9 @@ The main scripts in this project are:
 
 - `lasa_node.cpp` and `lasa_node.cpp` implement the ros nodes for the aforementioned tasks. 
 
+### Usage
 
-
-To launch the nodes, use the `VSDS.launch`, for instance:
+ To launch the nodes, use the `VSDS.launch`, specifying the shape you want to execute (for a list of the available shapes already, check `/config`), for instance:
 ```
 roslaunch vsds_orient VSDS.launch VSDS_name:=Worm
 ```
