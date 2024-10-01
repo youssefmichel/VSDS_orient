@@ -14,7 +14,7 @@
 #include "dhdc.h"
 #include "drdc.h"
 #include <signal.h>
-#include "MotionGeneration.h"
+#include "motion_generation.h"
 
 
 
@@ -42,27 +42,29 @@ using  namespace  Eigen;
 namespace FRI_wrapper{
 
 int startCartImpedanceCtrl(FastResearchInterface *fri, float *commCartPose) ;
-int HD_gravityCompensation() ;
+
 int startJointImpedanceCtrl(FastResearchInterface *fri, float *commJointPosition) ;
 int loadVectorMatrixFromFile (std::string fileName, int cols, vector<vector<float>> &outMat) ;
 Vec SaturationFunc(Vec inp,float max) ;
 void saveVectorMatrixToFile (string fileName, vector < vector <float> > outMat) ;
-int initiliaze_HD() ;
+
 float getSquaredDistance(float a[3], float b[3]) ;
-float low_pass(float signal, float prev_filt, float cutt_off, float cycle_time) ;
-void Exit_Func(int sig) ;
-float compute_damping_factor(float F_ext,float F_ext_min,float F_ext_max) ;
+float LowPass(float signal, float prev_filt, float cutt_off, float cycle_time) ;
+Vec LowPass(Vec signal, Vec prev_filt, float cutt_off, float cycle_time) ;
+
+
+float ComputeDampingFactor(float F_ext,float F_ext_min,float F_ext_max) ;
 Mat GetRotationMatrix(float *CartPose) ;
 Vec GetTranslation(float *CartPose) ; 
-Mat Convert_Jacobian_2Mat(float ** Jacobian) ;
-Mat Convert_MassMat_2Mat(float ** Mass) ;
-Vec float_2_Vec(float *inp,int size) ;
-Mat Tool_2_World_Jacobian(Mat Jac_tool,Mat Rot) ;
-void Set_Desired_Pose_FRI(Mat Rot_d,Vec x_d,float *CartPose_d) ;
-Vec Quart_Orient_err(Mat R_a, Mat R_d);
-Vec low_pass(Vec signal, Vec prev_filt, float cutt_off, float cycle_time) ;
-vector< std::vector <float> > Kuka_MoveCartesian_MinJerk(FastResearchInterface *FRI, float tot_time, float dt, Vec x_df) ;
-int MoveCartesian_MinJerk_FullPose(FastResearchInterface *FRI, float tot_time, float dt, Vec x_df, Quaterniond q_df) ;
+Mat ConvertJacobianToMat(float ** Jacobian) ;
+Mat ConvertMassMatToMat(float ** Mass) ;
+Vec floatToVec(float *inp,int size) ;
+Mat ToolToWorldJacobian(Mat Jac_tool,Mat Rot) ;
+void SetDesiredPoseFRI(Mat Rot_d,Vec x_d,float *CartPose_d) ;
+Vec QuartOrientErr(Mat R_a, Mat R_d);
+
+vector< std::vector <float> > KukaMoveCartesianMinJerk(FastResearchInterface *FRI, float tot_time, float dt, Vec x_df) ;
+int MoveCartesianMinJerkFullPose(FastResearchInterface *FRI, float tot_time, float dt, Vec x_df, Quaterniond q_df) ;
 int JointGravityCompensation(FastResearchInterface *FRI, float tot_time,string packPath) ;
 Mat GetFRIJacobian(FastResearchInterface *FRI,float ** ptr_jacobian, float *currentCartPose ) ;
 

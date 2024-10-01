@@ -89,11 +89,11 @@ set( sources_irml
 set( sources_main
 
      src/RunTrajectorySimple.cpp
-     src/VSDS_src/MotionGeneration.cpp
+     src/VSDS_src/motion_generation.cpp
      src/VSDS_src/utility.cpp
      src/VSDS_src/quatUtils.cpp
      src/utility_fri.cpp
-     src/VSDS_src/task_planner.cpp
+#     src/VSDS_src/task_planner.cpp
 
 )
 include_directories(

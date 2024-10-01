@@ -1,8 +1,15 @@
 
-#include "MotionGeneration.h"
+#include "motion_generation.h"
+
+
+namespace  vsds_orient_control {
 
 
 VSDSQuat::VSDSQuat(){
+
+}
+
+VSDSQuat::~VSDSQuat() {
 
 }
 
@@ -133,7 +140,7 @@ bool VSDSQuat::Initiliaze(){
 
 }
 
-Vec VSDSQuat::Omega(Vec x)
+Vec VSDSQuat::computeOmega(Vec x)
 {
     Vec omega = Vec::Zero(N_viapoints_);
     realtype sigmascale=1 ;
@@ -166,7 +173,7 @@ Vec VSDSQuat::Update(Vec qt_curr_vec){
       Mat fl = Mat::Zero(TS_SIZE,N_viapoints_);
 
 
-      Vec omega_curr=Omega(GeneralFunction::double2Vec(qt_curr_TS,3)) ;
+      Vec omega_curr=computeOmega(GeneralFunction::double2Vec(qt_curr_TS,3)) ;
       int indx_stf=0 ;
 
       for(int k=0; k<N_viapoints_; k++){
@@ -185,6 +192,7 @@ Vec VSDSQuat::Update(Vec qt_curr_vec){
 
 
 
+}
 
 MinJerk::MinJerk( realtype dt, realtype t_f, Vec x0, Vec xf):
 
@@ -195,6 +203,9 @@ MinJerk::MinJerk( realtype dt, realtype t_f, Vec x0, Vec xf):
 {
 
 }
+
+MinJerk::MinJerk() {}
+MinJerk::~MinJerk(){}
 
 void MinJerk::Update(realtype t)
 {

@@ -2,7 +2,7 @@
 
 using namespace boost::filesystem;
 
-
+using namespace vsds_orient_control ;
 
 
 //*******************************************************************************************
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
 
     std::string initJointFile    = packPath + "/data/InitAnglePos_cutting.txt";
-    string initJointFile_nor    = packPath + "/data/InitAnglePos_Normal.txt";
+    string initJointFile_norm    = packPath + "/data/InitAnglePos_Normal.txt";
 
 
 
@@ -104,28 +104,28 @@ int main(int argc, char *argv[])
             FRI->GetMeasuredCartPose(currentCartPose);
             Vec x_d=FRI_wrapper::GetTranslation(currentCartPose) ;
             Matrix3d R_init_VSDS= q_init_VSDS.normalized().toRotationMatrix() ;
-            FRI_wrapper::MoveCartesian_MinJerk_FullPose( FRI, 2, FRI->GetFRICycleTime(), x_d,  q_init_VSDS) ;
+            FRI_wrapper::MoveCartesianMinJerkFullPose( FRI, 2, FRI->GetFRICycleTime(), x_d,  q_init_VSDS) ;
 
 
             break ;}
 
         case 'w':
         case 'W': {
-          cutting_task_planner MycuttingPlanner ;
-          MycuttingPlanner.init(FRI,nh,DS_ModelName) ;
+          CuttingTaskPlanner MycuttingPlanner ;
+          MycuttingPlanner.Init(FRI,nh,DS_ModelName) ;
           int CycleCounter=0 ;
           int done =0 ;
 
           while ((FRI->IsMachineOK()) && ((float)CycleCounter * FRI->GetFRICycleTime()< 40.0 )  && (done==0) ){
 
-              MycuttingPlanner.run() ;
+              MycuttingPlanner.Run() ;
 
               CycleCounter++ ;
              if (dhdKbHit() && dhdKbGet()=='q') done = 1;
 
           }
 
-          MycuttingPlanner.save_data_toFile() ;
+          MycuttingPlanner.SaveDataToFile();
 
             break ;
         }

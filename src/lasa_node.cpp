@@ -2,7 +2,7 @@
 
 using namespace boost::filesystem;
 
-
+using namespace vsds_orient_control ;
 
 
 //*******************************************************************************************
@@ -112,27 +112,27 @@ int main(int argc, char *argv[])
             FRI->GetMeasuredCartPose(currentCartPose);
             Vec x_d=FRI_wrapper::GetTranslation(currentCartPose) ;
             Matrix3d R_init_VSDS= q_init_VSDS.normalized().toRotationMatrix() ;
-            FRI_wrapper::MoveCartesian_MinJerk_FullPose( FRI, 2, FRI->GetFRICycleTime(), x_d,  q_init_VSDS) ;
+            FRI_wrapper::MoveCartesianMinJerkFullPose( FRI, 2, FRI->GetFRICycleTime(), x_d,  q_init_VSDS) ;
 
 
             break ;}
 
         case 'w':
         case 'W': {
-          lasa_task_planner MylasaPlanner ;
-          MylasaPlanner.init(FRI,nh,DS_ModelName) ;
+          LasaTaskPlanner MylasaPlanner ;
+          MylasaPlanner.Init(FRI,nh,DS_ModelName) ;
           int CycleCounter=0 ;
           int done =0 ;
 
           while ((FRI->IsMachineOK()) && ((float)CycleCounter * FRI->GetFRICycleTime()< 40.0 )  && (done==0) ){
 
-              MylasaPlanner.run() ;
+              MylasaPlanner.Run() ;
               CycleCounter++ ;
              if (dhdKbHit() && dhdKbGet()=='q') done = 1;
 
           }
 
-          MylasaPlanner.save_data_toFile() ;
+          MylasaPlanner.SaveDataToFile(); ;
 
             break ;
         }

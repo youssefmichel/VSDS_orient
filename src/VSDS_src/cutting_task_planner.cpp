@@ -1,15 +1,15 @@
 #include "cutting_task_planner.h"
 
 
-cutting_task_planner::cutting_task_planner(){
+namespace vsds_orient_control {
 
-}
 
-int cutting_task_planner::init(FastResearchInterface *FRI,ros::NodeHandle nh, string DS_ModelName) {
+
+int CuttingTaskPlanner::Init(FastResearchInterface *FRI,ros::NodeHandle nh, string DS_ModelName) {
 
     FRI_=FRI ;
     DS_ModelName_=DS_ModelName ;
-    init_datalogging() ;
+    InitDataLogging();
 
 
     FRI_->GetMeasuredJointPositions(currentJointPosition_);
@@ -25,8 +25,8 @@ int cutting_task_planner::init(FastResearchInterface *FRI,ros::NodeHandle nh, st
         FRI_->GetMeasuredCartPose(currentCartPose_);
         x_init_=FRI_wrapper::GetTranslation(currentCartPose_) ;
 
-        MyVSDSQuat_=new VSDSQuat() ; ;
-        MyVSDSQuat_->Initiliaze() ;
+
+        MyVSDSQuat_.Initiliaze() ;
 
         for (int i=0 ; i< NUMBER_OF_JOINTS ; i++){
             JointStiffnessValues_[i]=MIN_STIFFNESS ;
@@ -39,7 +39,7 @@ int cutting_task_planner::init(FastResearchInterface *FRI,ros::NodeHandle nh, st
         FRI_->SetCommandedJointPositions(currentJointPosition_);
         FRI_->SetCommandedCartPose(currentCartPose_);
 
-        q_prev_=FRI_wrapper::float_2_Vec(currentJointPosition_,NUMBER_OF_JOINTS) ;
+        q_prev_=FRI_wrapper::floatToVec(currentJointPosition_,NUMBER_OF_JOINTS) ;
         q_dot_prev_=Vec::Zero(NUMBER_OF_JOINTS) ;
         x_prev_=x_init_ ;
         x_dot_prev_=Vec::Zero(3) ;
@@ -80,7 +80,7 @@ int cutting_task_planner::init(FastResearchInterface *FRI,ros::NodeHandle nh, st
 
 }
 
-void cutting_task_planner::init_datalogging() {
+void CuttingTaskPlanner::InitDataLogging() {
 
     printf("       please enter Demo Number \n");
     char n ;
@@ -101,7 +101,7 @@ void cutting_task_planner::init_datalogging() {
 
 }
 
-void cutting_task_planner::run(){
+void CuttingTaskPlanner::Run(){
 
 
     FRI_->WaitForKRCTick();
@@ -112,16 +112,16 @@ void cutting_task_planner::run(){
     Matrix3d Rot_mat=FRI_wrapper::GetRotationMatrix(currentCartPose_) ;
     //   Mat Jacobian_Matrix_world=FRI_wrapper::GetFRI_Jacobian(FRI_,ptr_jacobian_,currentCartPose_) ;
     FRI_->GetCurrentJacobianMatrix (ptr_jacobian_);
-    Mat Jac_temp=FRI_wrapper::Convert_Jacobian_2Mat(ptr_jacobian_) ;
+    Mat Jac_temp=FRI_wrapper::ConvertJacobianToMat(ptr_jacobian_) ;
     Mat Jacobian_Matrix_tool=Jac_temp ;
     Jacobian_Matrix_tool.row(3)=Jac_temp.row(5) ;
     Jacobian_Matrix_tool.row(5)=Jac_temp.row(3) ;
-    Mat Jacobian_Matrix_world=FRI_wrapper::Tool_2_World_Jacobian(Jacobian_Matrix_tool,Rot_mat) ;
+    Mat Jacobian_Matrix_world=FRI_wrapper::ToolToWorldJacobian(Jacobian_Matrix_tool,Rot_mat) ;
 
 
     Vec x=FRI_wrapper::GetTranslation(currentCartPose_) ;
 
-    Vec q=FRI_wrapper::float_2_Vec(currentJointPosition_,NUMBER_OF_JOINTS) ;
+    Vec q=FRI_wrapper::floatToVec(currentJointPosition_,NUMBER_OF_JOINTS) ;
 
     Eigen::Quaterniond quat_curr_eig(Rot_mat);
     Vec quat_curr_vec=Vec::Zero(4)  ;
@@ -131,11 +131,11 @@ void cutting_task_planner::run(){
     quat_curr_vec(3)=quat_curr_eig.z() ;
 
     Vec q_dot=(q-q_prev_)/dt_ ; q_prev_=q ;
-    q_dot=FRI_wrapper::low_pass(  q_dot,   q_dot_prev_,50.0,dt_ ) ;
+    q_dot=FRI_wrapper::LowPass(  q_dot,   q_dot_prev_,50.0,dt_ ) ;
     q_dot_prev_=q_dot ;
 
     Vec x_dot=(x-x_prev_)/dt_ ; x_prev_=x ;
-    x_dot=FRI_wrapper::low_pass(  x_dot,  x_dot_prev_, 50.0, dt_ ) ;
+    x_dot=FRI_wrapper::LowPass(  x_dot,  x_dot_prev_, 50.0, dt_ ) ;
     x_dot_prev_=x_dot ;
 
     if(file_counter_<dim_cut_-1){
@@ -144,7 +144,7 @@ void cutting_task_planner::run(){
 
     Vec F_transl= 2000*(x_d_-x)-55*x_dot ;
 
-   Vec tau_orient_VSDS=MyVSDSQuat_->Update(quat_curr_vec) ;
+   Vec tau_orient_VSDS=MyVSDSQuat_.Update(quat_curr_vec) ;
     Mat Jac_o= Jacobian_Matrix_world.block(3, 0, 3, 7);
     Vec omega = Jac_o*q_dot ;
     Vec tau_o = Jac_o.transpose()*( tau_orient_VSDS - D_orient_*omega );
@@ -192,11 +192,9 @@ void cutting_task_planner::run(){
 
 }
 
-void cutting_task_planner::push_data_toVector() {
 
-}
 
-void cutting_task_planner::save_data_toFile() {
+void CuttingTaskPlanner::SaveDataToFile() {
 
 
     FRI_wrapper::saveVectorMatrixToFile(x_rob_file_, x_rob_Vector_);
@@ -215,5 +213,7 @@ void cutting_task_planner::save_data_toFile() {
     FRI_->SetCommandedJointPositions(currentJointPosition_);
     FRI_->SetCommandedJointStiffness(JointStiffnessValues_);
     FRI_->SetCommandedJointDamping(JointDampingValues_);
+
+}
 
 }

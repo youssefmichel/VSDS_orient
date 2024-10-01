@@ -9,6 +9,8 @@
 
 #define TS_SIZE 3  //define Tangen space size
 
+namespace vsds_orient_control {
+
 
 class VSDSQuat {
 private:
@@ -25,9 +27,10 @@ public:
     VSDSQuat() ;
     bool Initiliaze();
     Vec  Update(Vec q_curr) ;
-    Vec Omega(Vec x) ;
+    Vec computeOmega(Vec x) ;
+    ~VSDSQuat() ;
 };
-
+}
 
 class MinJerk {
 private:
@@ -45,6 +48,9 @@ public:
     MinJerk( realtype dt, realtype t_f, Vec x0, Vec xf);
     void Update(realtype t);
     Vec GetDesiredPos();
+     MinJerk() ;
+    ~MinJerk() ;
+
 
 };
 
